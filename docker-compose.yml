@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: search-engine-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: search_engine
+      MYSQL_USER: search_user
+      MYSQL_PASSWORD: search_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - search-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Mock Provider Server
+  mock-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mock
+    container_name: search-engine-mock
+    ports:
+      - "3001:3001"
+    networks:
+      - search-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Main Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: search-engine-app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=search_user
+      - DB_PASSWORD=search_password
+      - DB_NAME=search_engine
+      - SERVER_PORT=8080
+      - PROVIDER_JSON_URL=http://mock-server:3001/api/videos
+      - PROVIDER_XML_URL=http://mock-server:3001/api/articles
+      - PROVIDER_TIMEOUT=30s
+      - PROVIDER_RATE_LIMIT=100
+      - CACHE_TTL=300s
+      - CACHE_MAX_SIZE=1000
+      - LOG_LEVEL=info
+      - JWT_SECRET=your-secret-key
+      - CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mock-server:
+        condition: service_healthy
+    networks:
+      - search-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache (Optional)
+  redis:
+    image: redis:7-alpine
+    container_name: search-engine-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - search-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  search-network:
+    driver: bridge 
