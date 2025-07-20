@@ -472,26 +472,9 @@ docker run -d \
 
 ---
 
-## 🤝 Katkıda Bulunma
-
-### Geliştirme Ortamı Kurulumu
-1. Fork yapın
-2. Feature branch oluşturun
-3. Değişikliklerinizi commit edin
-4. Testleri çalıştırın
-5. Pull request gönderin
-
-### Kod Standartları
-- Go fmt kullanın
-- Lint kurallarına uyun
-- Test coverage %80+ olmalı
-- Documentation güncelleyin
-
----
-
 ## 📝 Changelog
 
-### v2.0.0 (2024-01-15)
+### v2.0.0 (2025-07-20)
 - ✨ Clean Architecture implementasyonu
 - 🔒 Güvenlik middleware'leri eklendi
 - 🧪 Kapsamlı test suite
@@ -499,34 +482,9 @@ docker run -d \
 - 🐳 Docker desteği
 - 📚 Detaylı dokümantasyon
 
-### v1.0.0 (2024-01-10)
+### v1.0.0 (2025-07-19)
 - 🎉 İlk sürüm
 - 🔍 Temel arama fonksiyonalitesi
 - 📦 Provider entegrasyonu
 
 ---
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
-
----
-
-## 👥 Ekip
-
-- **Geliştirici**: [Adınız]
-- **Email**: [email@example.com]
-- **GitHub**: [github.com/kullaniciadi]
-
----
-
-## 🙏 Teşekkürler
-
-- [Gin Framework](https://github.com/gin-gonic/gin)
-- [GORM](https://gorm.io/)
-- [Uber Zap](https://github.com/uber-go/zap)
-- [Testify](https://github.com/stretchr/testify)
-
----
-
-**⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!** 
